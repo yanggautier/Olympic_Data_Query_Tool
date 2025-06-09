@@ -24,7 +24,12 @@ def olympic_data_generation():
         connect_string = os.getenv("DB_CONNECT_STRING")
         if connect_string:
             engine = create_engine(connect_string)
-            df.to_sql('fact_resultats_epreuves', engine, if_exists='append', index=False)
+            df.to_sql(
+                name='resultats_olympiques',
+                con=engine,
+                schema='olympic',
+                if_exists='append',
+                index=False)
         else:
             raise Exception("Impossibe de connecter à la base de données")
 

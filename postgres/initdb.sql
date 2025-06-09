@@ -1,18 +1,9 @@
--- Check if the database exists and create it if not
--- This block uses a trick with DO $$ ... $$ to run PL/pgSQL
--- which allows conditional logic
-DO
-$do$
-BEGIN
-    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'olympic_db') THEN
-       CREATE DATABASE olympic_db;
-    END IF;
-END
-$do$;
-
+---------------------------- Configuration de Table ----------------------------------
+-- Création de Schema
+CREATE SCHEMA IF NOT EXISTS olympic;
 
 -- Création de table pour le jeu de données
-CREATE TABLE IF NOT EXISTS fact_resultats_epreuves (
+CREATE TABLE IF NOT EXISTS olympic.resultats_olympiques(
     id_resultat  INTEGER NOT NULL,
     id_resultat_source INTEGER NOT NULL,
     source VARCHAR,
@@ -65,3 +56,21 @@ CREATE TABLE IF NOT EXISTS fact_resultats_epreuves (
     dt_creation  VARCHAR,
     dt_modification  VARCHAR
 );
+
+---------------------------- Configuration de sécurité ----------------------------------
+-- Configuration des autorisations pour Rôle d'administrateur
+ALTER SCHEMA olympic OWNER TO admin_user;
+GRANT ALL PRIVILEGES ON SCHEMA olympic TO admin_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA olympic TO admin_user;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA olympic TO admin_user;
+
+
+-- Créer un rôle analyst en lecture seule
+CREATE ROLE analyst;
+GRANT CONNECT ON DATABASE olympic_db TO analyst;
+GRANT USAGE ON SCHEMA olympic TO analyst;
+GRANT SELECT ON TABLE olympic.resultats_olympiques TO analyst;
+
+-- Créer un utilisateur pour Django
+CREATE USER analyst_user WITH PASSWORD 'analyst_password';
+GRANT analyst TO analyst_user;
