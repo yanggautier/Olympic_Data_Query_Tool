@@ -1,5 +1,3 @@
-Voici la version **anglaise** du README :
-
 ---
 
 # 🏋️ Olympic Data Query Tool
