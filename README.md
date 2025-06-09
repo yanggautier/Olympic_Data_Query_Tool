@@ -1,5 +1,3 @@
----
-
 # 🏋️ Olympic Data Query Tool
 
 ## 🧠 Project Background
